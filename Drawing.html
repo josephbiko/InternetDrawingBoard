@@ -1,0 +1,140 @@
+
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Portfolio - </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <body>
+
+        <div id="canvasDiv"></div>
+        <script type="text/javascript">
+
+            var colorPurple = "#cb3594";
+            var colorGreen = "#659b41";
+            var colorYellow = "#ffcf33";
+            var colorBrown = "#986928";
+            var clickColor = new Array();
+            var clickSize = new Array();
+            var clickTool = new Array();
+            var canvasWidth = 800;
+            var canvasHeight= 800;
+            var border = "border:3px dotted black;";
+
+            var curSize = "big";
+            var curTool = "crayon";
+            var curColor = colorPurple;
+           
+
+
+
+            canvasDiv = document.getElementById("canvasDiv");
+            canvas = document.createElement('canvas');
+            canvas.setAttribute('width', canvasWidth);
+            canvas.setAttribute('height', canvasHeight);
+            canvas.style = border;
+            canvas.setAttribute('id', 'canvas');
+            canvasDiv.appendChild(canvas);
+            
+            if(typeof G_vmlCanvasManager != 'undefined') {
+                canvas = G_vmlCanvasManager.initElement(canvas);
+            }
+            context = canvas.getContext("2d");
+
+            $('#canvas').mousedown(function(e){
+              var mouseX = e.pageX - this.offsetLeft;
+              var mouseY = e.pageY - this.offsetTop;
+
+              paint = true;
+              addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+              redraw();
+          });
+
+            $('#canvas').mousemove(function(e){
+              if(paint){
+                addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+                redraw();
+            }
+        });
+
+            $('#canvas').mouseup(function(e){
+              paint = false;
+          });
+
+            $('#canvas').mouseleave(function(e){
+              paint = false;
+          });
+
+
+            var clickX = new Array();
+            var clickY = new Array();
+            var clickDrag = new Array();
+            var paint;
+
+            function addClick(x, y, dragging){
+              clickX.push(x);
+              clickY.push(y);
+              clickDrag.push(dragging);
+             
+              clickSize.push(curSize);
+              if(curTool=="eraser"){
+                 clickColor.push("white");
+              }else{
+                clickColor.push(curColor);
+              }
+              clickTool.push(curTool);
+          }
+
+          function redraw(){
+              context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+              
+              
+              context.lineJoin = "round";
+                
+
+
+            for(var i=0; i < clickX.length; i++) {        
+                switch(clickSize[i]){
+                    case "tiny":
+                        radius=1;
+                        break;
+                    case "normal":
+                        radius=3;
+                        break;
+                    case "big":
+                        radius=6;
+                        break;
+                    default:
+                    radius=1;
+                }
+
+
+                context.beginPath();
+                if(clickDrag[i] && i){
+                  context.moveTo(clickX[i-1], clickY[i-1]);
+                }else{
+                    context.moveTo(clickX[i]-1, clickY[i]);
+                }
+                context.strokeStyle=clickColor[i];
+                context.lineTo(clickX[i], clickY[i]);
+                context.closePath();
+                context.lineWidth = radius ;
+                context.stroke();
+            }
+   }
+
+</script>
+
+</body>
+</html>
